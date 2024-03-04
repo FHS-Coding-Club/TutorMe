@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 
 
-const CreateRequest = () => {
+function CreateRequest (){
     // Your base page content goes here3
     const formSchema = z.object({
         studentName: z.string({
