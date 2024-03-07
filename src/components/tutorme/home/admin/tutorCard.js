@@ -24,5 +24,7 @@ export function TutorCard() {
         </CardFooter>
       </Card>
     </div>
+
   );
 }
+
