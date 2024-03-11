@@ -15,4 +15,4 @@ const AcceptRequest = () => {
     );
 };
 
-export default AcceptRequest;
+// export default AcceptRequest;

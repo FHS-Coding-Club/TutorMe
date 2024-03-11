@@ -2,6 +2,7 @@
 import React from 'react';
 import { signIn } from "next-auth/react";
 import { EnvelopeOpenIcon } from "@radix-ui/react-icons"
+import { Navbar } from '../home/nav/navbar';
 import {
   Card,
   CardContent,
