@@ -1,6 +1,14 @@
-export default function GetBestMatch(student) {
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export default async function GetBestMatch(student) {
+
   let bestMatch = null;
   let bestMatchScore = 0;
+  let bestTutor;
+
+  const tutors = await prisma.tutor.findMany()
 
   for (const tutor of tutors) {
     let matchScore = 0;
@@ -22,8 +30,9 @@ export default function GetBestMatch(student) {
     if (matchScore > bestMatchScore) {
       bestMatch = tutor;
       bestMatchScore = matchScore;
+      bestTutor = tutor
     }
   }
 
-  return bestMatch;
+  return bestTutor;
 }
