@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { MdOutlineEmail } from "react-icons/md";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +6,7 @@ import { CiEdit } from "react-icons/ci";
 import { Chip } from "@nextui-org/react";
 import { cn } from "@/lib/utils";
 import { getSubjectColor, getSubjectIcon } from "@/components/utils/common";
+
 export default function AcceptStudentCard({
   id,
   studentName,
@@ -15,11 +14,15 @@ export default function AcceptStudentCard({
   subjects,
   onDelete,
   onModify,
+  isRemoving,
 }) {
   return (
     <Card
       id={`card-${id}`}
-      className="m-4 w-full max-w-7xl transition-shadow hover:shadow-md hover:cursor-pointer"
+      className={cn(
+        "m-4 w-full max-w-7xl transition-all duration-500",
+        isRemoving ? "animate-slideOut" : "hover:shadow-md hover:cursor-pointer"
+      )}
     >
       <CardContent className="p-4">
         <div className="flex justify-between">

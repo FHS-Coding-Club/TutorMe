@@ -41,6 +41,7 @@ import { cn } from "@/lib/utils";
 import AcceptStudentCard from "@/components/utils/acceptStudentCard";
 
 const TutorOverview = () => {
+  const [removingId, setRemovingId] = useState(null);
   const [studentArr, setStudentArr] = useState([]);
   const [listStudent, setListStudent] = useState([]);
   const [isReversed, setIsReversed] = useState(false);
@@ -62,34 +63,38 @@ const TutorOverview = () => {
   const [viewMode, setViewMode] = useState("card");
 
   const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`/api/admin/tutors/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete request");
+    setRemovingId(id);
+    setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/admin/tutors/${id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to delete request");
+        }
+        setListStudent((prev) => prev.filter((student) => student.id !== id));
+        setFilteredStudents((prev) =>
+          prev.filter((student) => student.id !== id)
+        );
+        setStudentArr((prev) => prev.filter((student) => student.id !== id));
+        toast({
+          title: "Success",
+          description: "Tutor deleted successfully",
+          variant: "default",
+          className: "bg-green-500 text-white",
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error("Failed to delete tutor:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete tutor",
+          variant: "destructive",
+          duration: 3000,
+        });
       }
-      setListStudent((prev) => prev.filter((student) => student.id !== id));
-      setFilteredStudents((prev) =>
-        prev.filter((student) => student.id !== id)
-      );
-      setStudentArr((prev) => prev.filter((student) => student.id !== id));
-      toast({
-        title: "Success",
-        description: "Tutor deleted successfully",
-        variant: "default",
-        className: "bg-green-500 text-white",
-        duration: 3000,
-      });
-    } catch (error) {
-      console.error("Failed to delete tutor:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete tutor",
-        variant: "destructive",
-        duration: 3000,
-      });
-    }
+    }, 500);
+   
   };
   const handleModifyClick = (tutor) => {
     setSelectedRequest(tutor);
@@ -424,6 +429,7 @@ const TutorOverview = () => {
                       onDelete={handleDelete}
                       onModify={handleModifyClick}
                       key={student.id}
+                      isRemoving={removingId === student.id}
                     />
                   ))}
                 </div>
