@@ -38,9 +38,11 @@ import {
   Progress,
 } from "@nextui-org/react";
 
+
 import { CiEdit } from "react-icons/ci";
 
 const TeacherTutorRequests = () => {
+  const [removingId, setRemovingId] = useState(null);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -92,29 +94,34 @@ const TeacherTutorRequests = () => {
   });
 
   const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`/api/teacher/tutor-request/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete request");
+    setRemovingId(id);
+  
+    setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/teacher/tutor-request/${id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to delete request");
+        }
+  
+        // Remove the deleted request from the local state
+        setRequests((prev) => prev.filter((request) => request.id !== id));
+        setListStudent((prev) => prev.filter((request) => request.id !== id));
+        setStudentArr((prev) => prev.filter((request) => request.id !== id));
+  
+        toast({
+          title: "Success",
+          description: "Tutor request deleted successfully",
+          variant: "default",
+          className: "bg-green-500 text-white",
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error("Failed to delete request:", error);
       }
-
-      // Remove the deleted request from the local state
-      setRequests((prev) => prev.filter((request) => request.id !== id));
-      setListStudent((prev) => prev.filter((request) => request.id !== id));
-      setStudentArr((prev) => prev.filter((request) => request.id !== id));
-
-      toast({
-        title: "Success",
-        description: "Tutor request deleted successfully",
-        variant: "default",
-        className: "bg-green-500 text-white",
-        duration: 3000,
-      });
-    } catch (error) {
-      console.error("Failed to delete request:", error);
-    }
+    }, 500);
+    
   };
 
   const handleModifyClick = (request) => {
@@ -304,7 +311,7 @@ const TeacherTutorRequests = () => {
           }
         />
       </div>
-      <div className="w-full overflow-y-auto max-h-[calc(100vh-120px)]">
+      <div className="w-full overflow-auto max-h-[calc(100vh-120px)]">
         {noResults ? (
           <div className="flex justify-center items-center h-full">
             <p className="text-gray-500 text-lg">No results found</p>
@@ -314,7 +321,8 @@ const TeacherTutorRequests = () => {
             {listStudent.map((request) => (
               <Card
                 key={request.id}
-                className="overflow-hidden w-[38%] mb-8 h-[360px] mx-3 bg-white border  hover:shadow-[#FACC14] shadow-lg transition-transform duration-200 ease-in-out hover:scale-105"
+                className={cn(" w-[38%] mb-8 h-[360px] mx-3 bg-white border  hover:shadow-[#FACC14] shadow-lg transition-transform duration-200 ease-in-out hover:scale-105",  removingId === request.id ? "animate-slideOut" : "hover:shadow-md hover:cursor-pointer"
+                )}
               >
                 <strong>
                   <CardHeader className="text-black-700 text-m items-center justify-center flex-col">
