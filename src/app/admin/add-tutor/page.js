@@ -117,7 +117,6 @@ const TutorRequest = () => {
                 placeholder="student@franklinsabers.org"
                 description="Enter the student's email address"
                 form={form}
-                isRequired
                 disabled={loading}
               />
 
