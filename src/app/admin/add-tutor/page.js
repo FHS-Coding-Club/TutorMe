@@ -11,6 +11,7 @@ import { BsExclamationCircle } from "react-icons/bs";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTutorSchemaReal } from "@/lib/forms/schemas";
+import { FormDropDownInput } from "@/components/tutorme/inputs/FormDropDownInput";
 import {
   subjectsOptions,
   customStyles,
@@ -143,6 +144,24 @@ const TutorRequest = () => {
                     )}
                   </div>
                 )}
+              />
+
+                <FormDropDownInput
+                name="gender"
+                label="Gender"
+                options={[
+                  {
+                    group: [
+                      { value: "M", label: "Male" },
+                      { value: "F", label: "Female" },
+                      { value: "O", label: "Other" },
+                    ],
+                  },
+                ]}
+                form={form}
+                description="Enter your gender"
+                isRequired
+                disabled={loading}
               />
 
               <p
