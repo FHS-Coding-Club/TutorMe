@@ -5,34 +5,57 @@ const prisma = new PrismaClient();
 export default async function GetBestMatch(student) {
 
   let bestMatch = null;
-  let bestMatchScore = 0;
-  let bestTutor;
+  let bestMatchScore = -99;
+  let cachedTutor = null;
 
-  const tutors = await prisma.tutor.findMany()
+  try {
+    const tutors = await prisma.tutor.findMany()
 
-  for (const tutor of tutors) {
-    let matchScore = 0;
+    tutorLoop: for (const tutor of tutors) {
+      if(tutor.matchedRequest.length() > 3){
+        continue
+      }
 
-    // Check if gender matches
-    if (student.gender === tutor.gender) {
-      matchScore += 2;
+      let matchScore = 0;
+      let subjectScore = 0
+
+      for (const subject of tutor.subjects) {
+        if (student.subject != subject) {
+          continue
+        } else {
+          subjectScore++
+          break
+        }
+      }
+
+      if (subjectScore == 0) {
+        continue tutorLoop
+      } else {
+        cachedTutor = tutor
+      }
+
+      // Check if gender matches
+      if (student.genderPref == tutor.gender) {
+        matchScore += 2;
+      }
+
+      if (matchScore > bestMatchScore) {
+        bestMatch = tutor;
+        bestMatchScore = matchScore;
+      }
     }
 
-    // Check if the student's wanted subject matches the tutor's subjects
-    if (tutor.subjects.includes(student.wantedSubject)) {
-      matchScore += 3;
+    if (bestMatchScore <= 0) {
+      if (cachedTutor != null) {
+        console.log("could not match gender, forced to choose cachedTutor")
+        return cachedTutor
+      } else {
+        console.log("returning....................................................")
+        return "could not find a good match... sending email to mister decker"
+      }
     }
-
-    // Calculate age difference score
-    const ageDifference = Math.abs(student.age - tutor.age);
-    matchScore += 5 - ageDifference;
-
-    if (matchScore > bestMatchScore) {
-      bestMatch = tutor;
-      bestMatchScore = matchScore;
-      bestTutor = tutor
-    }
+    return bestMatch
+  } catch (error) {
+    console.log(error)
   }
-
-  return bestTutor;
 }
